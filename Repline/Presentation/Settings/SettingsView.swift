@@ -1,12 +1,11 @@
 import SwiftUI
 
-/// Settings screen: appearance, Health-sync, notifications, export, about/reset.
+/// Settings screen: appearance, notifications, export, about/reset.
 struct SettingsView: View {
     @State private var viewModel: SettingsViewModel
     private let dependencies: AppDependencies
 
     @AppStorage(SettingsStorageKey.appearanceRawValue) private var appearanceRawValue = AppAppearance.system.rawValue
-    @AppStorage(SettingsStorageKey.healthSyncEnabled) private var healthSyncEnabled = false
     @AppStorage(SettingsStorageKey.notificationsEnabled) private var notificationsEnabled = false
     @AppStorage(SettingsStorageKey.hasCompletedOnboarding) private var hasCompletedOnboarding = false
 
@@ -22,7 +21,6 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 appearanceSection
-                healthSection
                 notificationsSection
                 exportSection
                 aboutSection
@@ -56,26 +54,6 @@ struct SettingsView: View {
                 }
             }
             .pickerStyle(.segmented)
-        }
-    }
-
-    private var healthSection: some View {
-        Section("Apple Health") {
-            Toggle("Sync with Health", isOn: $healthSyncEnabled)
-                .disabled(!viewModel.isHealthAvailable)
-                .onChange(of: healthSyncEnabled) { _, newValue in
-                    Task {
-                        let granted = await viewModel.handleHealthSyncToggle(isEnabled: newValue)
-                        if newValue && !granted {
-                            healthSyncEnabled = false
-                        }
-                    }
-                }
-            if !viewModel.isHealthAvailable {
-                Text("Health is not available on this device.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
         }
     }
 

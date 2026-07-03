@@ -6,10 +6,7 @@ struct TowerView: View {
     @State private var viewModel: TowerViewModel
 
     init(dependencies: AppDependencies) {
-        _viewModel = State(initialValue: TowerViewModel(
-            dependencies: dependencies,
-            healthSyncEnabled: { UserDefaults.standard.bool(forKey: SettingsStorageKey.healthSyncEnabled) }
-        ))
+        _viewModel = State(initialValue: TowerViewModel(dependencies: dependencies))
     }
 
     var body: some View {

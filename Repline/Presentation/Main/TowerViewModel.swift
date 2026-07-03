@@ -41,7 +41,6 @@ final class TowerViewModel {
     private(set) var personalRecordFanfare: WorkoutSet?
 
     private let dependencies: AppDependencies
-    private let healthSyncEnabled: () -> Bool
     private let restDuration = 90
 
     /// Every logged set, most recent floor first — the literal tower, top floor on top.
@@ -49,9 +48,8 @@ final class TowerViewModel {
         workouts.flatMap(\.sets).sorted { $0.date > $1.date }
     }
 
-    init(dependencies: AppDependencies, healthSyncEnabled: @escaping () -> Bool) {
+    init(dependencies: AppDependencies) {
         self.dependencies = dependencies
-        self.healthSyncEnabled = healthSyncEnabled
     }
 
     func load() async {
@@ -138,7 +136,6 @@ final class TowerViewModel {
             if startRestAfter {
                 startRestTimer()
             }
-            await dependencies.syncWorkoutToHealth.execute(outcome.workout, isEnabled: healthSyncEnabled())
             return outcome
         } catch {
             errorMessage = "Failed to log set."

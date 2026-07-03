@@ -6,7 +6,6 @@ import SwiftData
 @MainActor
 final class AppDependencies {
     let haptics = HapticsService()
-    let healthWriter: HealthWorkoutWriting
     let reminderScheduler: WorkoutReminderScheduling
 
     let logSet: LogSetUseCase
@@ -18,7 +17,6 @@ final class AppDependencies {
     let saveTrainingPreferences: SaveTrainingPreferencesUseCase
     let fetchTrainingPreferences: FetchTrainingPreferencesUseCase
     let scheduleWorkoutReminders: ScheduleWorkoutRemindersUseCase
-    let syncWorkoutToHealth: SyncWorkoutToHealthUseCase
     let exportWorkoutHistory: ExportWorkoutHistoryUseCase
     let resetAllData: ResetAllDataUseCase
 
@@ -26,10 +24,8 @@ final class AppDependencies {
         let workoutRepository = SwiftDataWorkoutRepository(modelContext: modelContext)
         let personalRecordRepository = SwiftDataPersonalRecordRepository(modelContext: modelContext)
         let preferencesRepository = SwiftDataTrainingPreferencesRepository(modelContext: modelContext)
-        let healthWriter = HealthKitWorkoutWriter()
         let reminderScheduler = LocalWorkoutReminderScheduler()
         let historyExporter = CSVWorkoutHistoryExporter()
-        self.healthWriter = healthWriter
         self.reminderScheduler = reminderScheduler
 
         logSet = DefaultLogSetUseCase(workouts: workoutRepository, personalRecords: personalRecordRepository)
@@ -41,7 +37,6 @@ final class AppDependencies {
         saveTrainingPreferences = DefaultSaveTrainingPreferencesUseCase(repository: preferencesRepository)
         fetchTrainingPreferences = DefaultFetchTrainingPreferencesUseCase(repository: preferencesRepository)
         scheduleWorkoutReminders = DefaultScheduleWorkoutRemindersUseCase(scheduler: reminderScheduler)
-        syncWorkoutToHealth = DefaultSyncWorkoutToHealthUseCase(healthWriter: healthWriter)
         exportWorkoutHistory = DefaultExportWorkoutHistoryUseCase(exporter: historyExporter)
         resetAllData = DefaultResetAllDataUseCase(
             workouts: workoutRepository,
